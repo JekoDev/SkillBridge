@@ -11,6 +11,7 @@ from .transport import resolve
 from .system_discovery import connect_system, system_roots
 from .wasm import run_wasi
 from .registry import add_root, roots as saved_roots
+from .project_inspect import inspect_project
 
 def main():
     parser = argparse.ArgumentParser(prog="skillbridge", description="Discover app skills from a local manifest or Markdown")
@@ -45,8 +46,13 @@ def main():
     sub.add_parser('system-roots', help='List opt-in operating system search roots')
     wasm = sub.add_parser('wasm', help='Run a WASI module with no preopened directories (requires wasmtime)')
     wasm.add_argument('module')
+    project = sub.add_parser("inspect-project", help="Read-only project analysis for coding agents")
+    project.add_argument("path", nargs="?", default=".")
     args = parser.parse_args()
     try:
+        if args.action == "inspect-project":
+            print(json.dumps(inspect_project(args.path), ensure_ascii=False, indent=2))
+            return 0
         if args.action == 'system-roots':
             print(json.dumps({'roots':system_roots()}, indent=2))
             return 0
