@@ -2,30 +2,45 @@
 
 # SkillBridge
 
-**Discover application capabilities without requiring every application to implement an agent protocol.** A small, language-neutral, local-first proof of concept.
+**Any app. Any language. Any agent.** Discover application capabilities without requiring every application to implement an agent protocol. A small, language-neutral, local-first proof of concept.
+
+[![PyPI](https://img.shields.io/pypi/v/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/) [![Python](https://img.shields.io/pypi/pyversions/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![GitHub](https://img.shields.io/badge/GitHub-JekoDev%2FSkillBridge-181717?logo=github)](https://github.com/JekoDev/SkillBridge)
 
 > **Status: v0.1.0 MVP.** The working features are local Markdown/JSON discovery, permission-gated command execution, and an optional token-protected Python HTTP bridge. **Not yet implemented:** automatic scanning of installed apps, MCP/OpenAPI adapters, native Rust core/DLL, npx installer, sandboxed execution, or automatic LLM integration. This is not an MCP implementation.
 
 ## Install in seconds
 
-Requires Python 3.10+ and Git. **The package is not published to PyPI yet.** After downloading or cloning this repository:
+**Published on [PyPI as `skillbridge-ai`](https://pypi.org/project/skillbridge-ai/).** Requires Python 3.10+.
 
 ```bash
-python -m pip install -e .
+python -m pip install --upgrade skillbridge-ai
+```
+
+Then discover capabilities in an app folder:
+
+```bash
+skillbridge discover ./my-app
+skillbridge inspect ./my-app
+```
+
+**Windows PATH note:** If `skillbridge` is not recognized, add your Python user Scripts directory to PATH (for example, `%APPDATA%\Python\Python311\Scripts` for Python 3.11) and open a new terminal. Alternatively, run the executable using its full path.
+
+To try the included sample manifests, clone the repository:
+
+```bash
+git clone https://github.com/JekoDev/SkillBridge.git
+cd SkillBridge
 skillbridge discover examples/manifests
 skillbridge inspect examples/manifests
 ```
 
-For a clean virtual environment:
+To contribute or install an editable development copy:
 
 ```bash
-python -m venv .venv
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# Linux/macOS:
-# source .venv/bin/activate
 python -m pip install -e .
 ```
+
+**Naming:** The distribution is `skillbridge-ai`; the Python import and CLI command remain `skillbridge`.
 
 ## Zero-server discovery
 
@@ -127,21 +142,17 @@ python -m unittest discover -s tests -v
 python -m build  # optional: first pip install build
 ```
 
-## How to publish `pip install skillbridge`
+## Distribution and releases
 
-`pip install skillbridge` only works after you publish a package with that exact name to [PyPI](https://pypi.org/). **Check name availability first**; this repository does not claim the name is available.
-
-1. Create a PyPI account and configure trusted publishing (recommended) or an API token.
-2. Update `name`, `version`, authors, and project metadata in `pyproject.toml`.
-3. Run `python -m pip install build twine` then `python -m build`.
-4. Validate with `python -m twine check dist/*` and publish with `python -m twine upload dist/*` (or use trusted publishing in CI).
-5. After publication: `python -m pip install skillbridge`.
-
-For a GitHub install **before** PyPI publication, replace `OWNER/REPO` with your actual GitHub path:
+SkillBridge v0.1.0 is available on [PyPI](https://pypi.org/project/skillbridge-ai/):
 
 ```bash
-python -m pip install 'git+https://github.com/OWNER/REPO.git'
+pip install skillbridge-ai
 ```
+
+Source code: [JekoDev/SkillBridge](https://github.com/JekoDev/SkillBridge). Releases: [GitHub Releases](https://github.com/JekoDev/SkillBridge/releases).
+
+Maintainers publish new versions using GitHub Actions and PyPI Trusted Publishing. Update the version in `pyproject.toml`, commit the change, then trigger the configured publishing workflow. A version already uploaded to PyPI cannot be overwritten.
 
 ## Roadmap
 
