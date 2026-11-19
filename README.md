@@ -9,7 +9,7 @@ SkillBridge is a local-first, open-source toolkit that helps AI agents discover 
 [![PyPI](https://img.shields.io/pypi/v/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Current release: v0.9.0** Â· [PyPI](https://pypi.org/project/skillbridge-ai/0.9.0/) Â· [GitHub](https://github.com/JekoDev/SkillBridge)
+**Current release: v0.9.0**· [PyPI](https://pypi.org/project/skillbridge-ai/0.9.0/) Â· [GitHub](https://github.com/JekoDev/SkillBridge)
 
 ## Why SkillBridge?
 
