@@ -1,0 +1,10 @@
+[package]
+name = "skillbridge-native"
+version = "0.6.0"
+edition = "2021"
+license = "MIT"
+description = "Native capability registry for SkillBridge"
+
+[lib]
+name = "skillbridge_native"
+crate-type = ["cdylib", "rlib"]

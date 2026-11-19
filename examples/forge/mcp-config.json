@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "skillbridge-testapp": {
+      "command": "python",
+      "args": ["-m", "skillbridge.cli", "mcp", "/ABSOLUTE/PATH/TO/examples/manifests"]
+    }
+  }
+}

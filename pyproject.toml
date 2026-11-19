@@ -4,20 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "skillbridge-ai"
-version = "0.1.0"
+version = "0.8.0"
 description = "Discover and safely invoke application capabilities through portable manifests"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [{name = "SkillBridge contributors"}]
 keywords = ["agents", "skills", "discovery", "cli", "interop"]
-
-[project.scripts]
-skillbridge = "skillbridge.cli:main"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -26,3 +19,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
+
+[project.scripts]
+skillbridge = "skillbridge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

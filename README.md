@@ -1,172 +1,147 @@
 ![SkillBridge banner](assets/banner.svg)
 
-# SkillBridge
+# SkillBridge v0.6.0 (source preview)
 
-**Any app. Any language. Any agent.** Discover application capabilities without requiring every application to implement an agent protocol. A small, language-neutral, local-first proof of concept.
+**Any app. Any language. Any agent.** A local-first discovery and integration toolkit for agent-accessible app capabilities.
 
-[![PyPI](https://img.shields.io/pypi/v/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/) [![Python](https://img.shields.io/pypi/pyversions/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![GitHub](https://img.shields.io/badge/GitHub-JekoDev%2FSkillBridge-181717?logo=github)](https://github.com/JekoDev/SkillBridge)
+[![PyPI](https://img.shields.io/pypi/v/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/) [![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> **Status: v0.1.0 MVP.** The working features are local Markdown/JSON discovery, permission-gated command execution, and an optional token-protected Python HTTP bridge. **Not yet implemented:** automatic scanning of installed apps, MCP/OpenAPI adapters, native Rust core/DLL, npx installer, sandboxed execution, or automatic LLM integration. This is not an MCP implementation.
+> **Publishing note:** v0.6.0 is a source preview. PyPI's latest version may be older. Install from this checkout to test these features.
 
-## Install in seconds
-
-**Published on [PyPI as `skillbridge-ai`](https://pypi.org/project/skillbridge-ai/).** Requires Python 3.10+.
-
-```bash
-python -m pip install --upgrade skillbridge-ai
-```
-
-Then discover capabilities in an app folder:
-
-```bash
-skillbridge discover ./my-app
-skillbridge inspect ./my-app
-```
-
-**Windows PATH note:** If `skillbridge` is not recognized, add your Python user Scripts directory to PATH (for example, `%APPDATA%\Python\Python311\Scripts` for Python 3.11) and open a new terminal. Alternatively, run the executable using its full path.
-
-To try the included sample manifests, clone the repository:
-
-```bash
-git clone https://github.com/JekoDev/SkillBridge.git
-cd SkillBridge
-skillbridge discover examples/manifests
-skillbridge inspect examples/manifests
-```
-
-To contribute or install an editable development copy:
+## Quickstart
 
 ```bash
 python -m pip install -e .
+python -m skillbridge.cli roots --add examples/autodiscovery
+python -m skillbridge.cli connect TestApp
+python -m skillbridge.cli auto TestApp
+python -m skillbridge.cli agent TestApp --model YOUR_LM_STUDIO_MODEL
 ```
 
-**Naming:** The distribution is `skillbridge-ai`; the Python import and CLI command remain `skillbridge`.
+The agent command requires an OpenAI-compatible local server on `127.0.0.1:1234/v1` and an LLM with tool-calling support. It requests confirmation before executing commands.
 
-## Zero-server discovery
+## Interfaces
 
-Create `skillbridge.json` in any application folder:
+| Feature | Status | Notes |
+|---|---|---|
+| JSON / Markdown skill discovery | Working | Markdown is documentation, not executable code |
+| Local app-name discovery | Working | Explicit configured roots only, no OS-wide blind scan |
+| Automatic transport selection | Partial | Local manifest or local OpenAPI JSON; not remote probing |
+| MCP stdio | Prototype | JSON-RPC tools/list and tools/call |
+| Local LM Studio agent | Prototype | Tool calling with per-invocation confirmation |
+| Forge integration | Adapter/example | Requires registration in Forge's actual tool interface |
+| Rust C-ABI core | Source available | Build on target OS with Cargo; not included in Python wheel |
+| C++/Go/Node/Rust/Python examples | Source available | Native examples require a compiled shared library |
+| npm/npx wrapper | Source available | Requires Python runtime; npm package not published |
+| OpenAPI | Discovery only | Does not execute remote endpoints |
+| WASM sandbox | Not implemented | Never run untrusted skills |
+| Signed manifests / granular permissions | Not implemented | No cryptographic trust model |
 
-```json
-{
-  "app": "TestApp",
-  "skills": [
-    {
-      "name": "greet",
-      "description": "Say hello to a user",
-      "type": "command",
-      "inputs": {"name": "string"},
-      "argv": ["python", "hello.py", "{name}"]
-    }
-  ]
-}
-```
-
-A compatible agent or tool runner can discover it with:
+## Discovery by name
 
 ```bash
-skillbridge discover ./testapp
+skillbridge roots --add ./examples/autodiscovery
+skillbridge connect TestApp
+skillbridge auto TestApp
 ```
 
-Alternatively, create `SKILL.md` or `AGENT.md`. SkillBridge will read it as **documentation only**, not silently execute commands mentioned in Markdown.
+Registry is stored in `~/.config/skillbridge/registry.json` by default; override with `SKILLBRIDGE_CONFIG`. You must explicitly register directories. No arbitrary filesystem crawling, network scanning or package installation occurs.
 
-### Call a command (requires explicit approval)
+## MCP / Forge
 
 ```bash
-skillbridge call examples/manifests greet --args '{"name":"Forge"}' --allow-execute
+skillbridge mcp examples/manifests
 ```
 
-On PowerShell, quoting JSON varies by shell. The CLI deliberately refuses execution without `--allow-execute`. Commands use argv arrays and `shell=False`, but this **does not sandbox** programs. Only run manifests you trust.
+Configure your MCP client with command `python`, args `['-m','skillbridge.cli','mcp','/absolute/path/to/examples/manifests']`. By default tool calls are **denied**; `--allow-execute` grants the server process permission to execute trusted commands, so only use it in a tightly controlled local setup.
 
-## Python: expose real functions
+`examples/forge/adapter.py` shows a generic tool registration adapter. **It is not a plug-in for a specific Forge build**: the actual Forge integration requires its tool registration interface.
 
-```python
-from skillbridge import Bridge
-
-bridge = Bridge("TestApp")
-bridge.expose("greet", "Say hello", lambda name: f"Hi {name}", {"name": "string"})
-bridge.serve()  # 127.0.0.1:8765, prints generated bearer token
-```
-
-Run `python examples/python/app.py`. A client with the token can then request:
+## Native C ABI
 
 ```bash
-curl -H "Authorization: Bearer YOUR_TOKEN" http://127.0.0.1:8765/manifest
-curl -X POST http://127.0.0.1:8765/call -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" -d '{"skill":"greet","args":{"name":"Forge"}}'
+cd native
+cargo test
+cargo build --release
 ```
 
-**Keep the token private.** The HTTP bridge is loopback-only, not production-hardened, and functions run with your application's permissions. Do not expose it to untrusted users.
+Build produces `.dll` on Windows, `.so` on Linux, or `.dylib` on macOS. See `native/README.md` and `examples/native/`. Native callbacks run in-process, with no isolation.
 
-## Examples in five languages
+## npm / npx
 
-The same `skillbridge discover` JSON output can be consumed by any language. The examples demonstrate **CLI interoperability**, not native bindings or direct function exposure for every language.
+The `npm/` directory contains an **unpublished** Node CLI wrapper. It calls the Python runtime, so install Python first.
 
-| Language | Example | Run from directory |
-| --- | --- | --- |
-| Python | [`examples/python/app.py`](examples/python/app.py) | `python app.py` |
-| TypeScript / Node.js | [`examples/typescript/demo.mjs`](examples/typescript/demo.mjs) | `node demo.mjs` |
-| Go | [`examples/go/main.go`](examples/go/main.go) | `go run main.go` |
-| Rust | [`examples/rust/main.rs`](examples/rust/main.rs) | `rustc main.rs -o demo && ./demo` |
-| C++ | [`examples/cpp/main.cpp`](examples/cpp/main.cpp) | `g++ main.cpp -o demo && ./demo` |
-
-Run the cross-language examples from their own folders after installing the CLI.
-
-## Architecture
-
-```text
-Existing app -> skillbridge.json / SKILL.md
-                          |
-Agent / SDK -> discovery CLI -> JSON capabilities
-                          |
-                   explicit approval
-                          |
-                    argv execution
-
-Python app -> Bridge.expose() -> local HTTP /manifest + /call
+```bash
+python -m pip install -e .
+cd npm
+npm link
+skillbridge --help
 ```
 
-**Design direction:** add pluggable adapters for MCP, OpenAPI, HTTP and native ABI while retaining one capability schema. Discovery is read-only; execution is separately authorized. No LLM is required to test the bridge.
+After independently publishing the npm package, `npx @jekodev/skillbridge` would become possible. Do not advertise this command as available before publication.
 
-## Security boundaries
+## Security
 
-- Local discovery never runs a command.
-- Commands require `--allow-execute` each invocation.
-- Command inputs are type-checked; arguments are passed without a shell.
-- The optional HTTP server binds to loopback and requires a bearer token.
-- **No process isolation or sandbox exists in this MVP.** A malicious approved manifest can execute arbitrary programs. Inspect manifests before approving.
-- Avoid exposing arbitrary SQL or filesystem operations. Design narrow, least-privilege skills.
+Discovery is read-only. Command execution requires explicit approval and uses `subprocess.run(..., shell=False)` with a timeout, **not a sandbox**. An approved command can still access everything your user can. Do not load untrusted manifests or run arbitrary shell tools. A real sandbox and signed manifest verification remain future work.
 
 ## Test
 
 ```bash
 python -m unittest discover -s tests -v
-python -m build  # optional: first pip install build
 ```
 
-## Distribution and releases
+## Release
 
-SkillBridge v0.1.0 is available on [PyPI](https://pypi.org/project/skillbridge-ai/):
+To publish to PyPI, update `pyproject.toml`, commit and tag a new version, then run the GitHub Actions trusted-publishing workflow. Never overwrite a published version. See [MIT license](LICENSE).
+
+
+## v0.7.0 additions (source release)
+
+- MCP stdio supports `Content-Length` JSON-RPC frames and legacy newline-delimited messages.
+- `skillbridge system-roots` shows OS-specific candidate app folders. `skillbridge system-connect AppName` opts in to searching those folders. No processes or network endpoints are probed.
+- `skillbridge wasm path/to/module.wasm` runs a WASI module using an **externally installed** `wasmtime` CLI without preopened host directories. Runtime security depends on Wasmtime and host configuration; this is not a comprehensive sandbox for arbitrary code.
+- `npm/` contains a Node CLI wrapper, but `npx @jekodev/skillbridge` requires separate npm publication and an installed Python `skillbridge-ai` runtime.
+- Forge adapter is framework-neutral; direct Forge application integration requires adapting Forge's actual plugin/tool interface.
+- Rust C-ABI source is included, but Rust compilation and cross-platform binary testing remain necessary.
+
+### Publishing
+
+This source version is **not yet published** to PyPI or npm. Run tests and build in your environment before tagging `v0.7.0`.
+
+
+## v0.8: verified MCP stdio and automated build checks
+
+`skillbridge mcp examples/manifests` now writes **one JSON-RPC message per line**
+to stdout, as required by MCP stdio. It continues accepting older Content-Length
+input frames for compatibility. No logs are printed to stdout. Executable tools
+are denied by default; `--allow-execute` is a deliberate trust decision and
+allows **all** command skills in the chosen manifest. Only use trusted manifests.
+
+`/.github/workflows/ci.yml` tests Python on Linux, Windows and macOS, builds
+the Rust C-ABI library on all three operating systems, and checks the npm
+package. CI execution on GitHub must be confirmed after pushing.
+
+### Native build
 
 ```bash
-pip install skillbridge-ai
+cargo test --manifest-path native/Cargo.toml
+cargo build --release --manifest-path native/Cargo.toml
 ```
 
-Source code: [JekoDev/SkillBridge](https://github.com/JekoDev/SkillBridge). Releases: [GitHub Releases](https://github.com/JekoDev/SkillBridge/releases).
+### Local npm wrapper (no publication required)
 
-Maintainers publish new versions using GitHub Actions and PyPI Trusted Publishing. Update the version in `pyproject.toml`, commit the change, then trigger the configured publishing workflow. A version already uploaded to PyPI cannot be overwritten.
+```bash
+cd npm
+npm pack
+# npm exec --package ./jekodev-skillbridge-0.8.0.tgz -- skillbridge --help
+```
 
-## Roadmap
+The npm wrapper **requires** an installed Python `skillbridge-ai` package.
+Publishing to npm and PyPI is a separate maintainer action, not automated here.
 
-- [x] Local JSON/Markdown discovery
-- [x] CLI read-only inspection and opt-in execution
-- [x] Python HTTP bridge with token auth
-- [x] Cross-language CLI examples
-- [ ] MCP/OpenAPI discovery adapters
-- [ ] Signed manifests and explicit permission scopes
-- [ ] Sandboxed execution via isolated processes / WASM
-- [ ] Native Rust core with C ABI (.dll/.so/.dylib)
-- [ ] npm/npx convenience CLI
-- [ ] Auto-discovery and Forge integration
+### Security scope
 
-## Contributing
-
-Issues and pull requests welcome. Please include a reproducible example and tests for behavior changes. See [LICENSE](LICENSE) (MIT).
+The WASI runner invokes the external Wasmtime CLI without preopened directories.
+This is not a comprehensive sandbox, does not impose OS-level network isolation,
+and should not be used for untrusted workloads without an external isolation
+boundary. The command runner executes with the current user's privileges.
