@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img" aria-label="SkillBridge: Any app. Any language. Any agent.">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0a1026"/><stop offset="1" stop-color="#151039"/></linearGradient><linearGradient id="accent"><stop stop-color="#19d3ef"/><stop offset="1" stop-color="#a25cff"/></linearGradient></defs>
+<rect width="1200" height="320" rx="22" fill="url(#bg)"/>
+<g fill="none" stroke="url(#accent)" stroke-width="5" opacity=".9"><path d="M88 80 L142 50 L196 80 L196 130 L142 160 L88 130 Z"/><path d="M98 103 L142 128 L187 103"/><path d="M142 128 L142 158"/></g>
+<text x="240" y="118" font-family="Arial,sans-serif" font-size="70" font-weight="bold" fill="#f5f6ff">Skill<tspan fill="#64adff">Bridge</tspan></text>
+<text x="245" y="167" font-family="Arial,sans-serif" font-size="25" fill="#c7c6e8">Any app. Any language. Any agent.</text>
+<text x="245" y="218" font-family="Arial,sans-serif" font-size="19" fill="#9ba9cc">Discover capabilities. Connect safely. Build freely.</text>
+<g fill="none" stroke="#5d83da" stroke-width="3"><path d="M840 88 H950 V65 H1040"/><path d="M840 160 H1040"/><path d="M840 232 H950 V255 H1040"/></g>
+<g fill="#202c56" stroke="#69dcff" stroke-width="2"><rect x="1010" y="39" width="145" height="53" rx="13"/><rect x="1010" y="134" width="145" height="53" rx="13"/><rect x="1010" y="229" width="145" height="53" rx="13"/></g>
+<g font-family="Arial,sans-serif" font-size="19" fill="#e4f7ff" text-anchor="middle"><text x="1082" y="72">Markdown</text><text x="1082" y="167">CLI / API</text><text x="1082" y="262">Agents</text></g>
+</svg>

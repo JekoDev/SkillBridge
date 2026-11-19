@@ -1,0 +1,18 @@
+{
+  "app": "DemoApp",
+  "version": "0.1.0",
+  "skills": [
+    {
+      "name": "greet",
+      "description": "Greets a person using a local Python script",
+      "type": "command",
+      "inputs": {"name": "string"},
+      "argv": ["python", "../python/hello.py", "{name}"]
+    },
+    {
+      "name": "help",
+      "description": "Documentation only: no executable action",
+      "type": "documentation"
+    }
+  ]
+}
