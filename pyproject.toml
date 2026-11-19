@@ -7,7 +7,7 @@ name = "skillbridge-ai"
 version = "0.8.0"
 description = "Discover and safely invoke application capabilities through portable manifests"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [{name = "SkillBridge contributors"}]
 keywords = ["agents", "skills", "discovery", "cli", "interop"]
