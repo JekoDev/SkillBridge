@@ -9,7 +9,7 @@ SkillBridge is a local-first, open-source toolkit that helps AI agents discover 
 [![PyPI](https://img.shields.io/pypi/v/skillbridge-ai)](https://pypi.org/project/skillbridge-ai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Current release: v0.8.0** · [PyPI](https://pypi.org/project/skillbridge-ai/0.8.0/) · [GitHub](https://github.com/JekoDev/SkillBridge)
+**Current release: v0.9.0** Â· [PyPI](https://pypi.org/project/skillbridge-ai/0.9.0/) Â· [GitHub](https://github.com/JekoDev/SkillBridge)
 
 ## Why SkillBridge?
 
@@ -141,6 +141,18 @@ The repository includes automated verification workflows for Python and native c
 - Default-deny behavior for MCP command execution.
 - Automated verification and release packaging for the Python distribution.
 - Published Python wheel and source distribution on PyPI.
+
+## Agent-Assisted Project Integration (v0.9.0)
+
+SkillBridge can provide a read-only project inspection report for coding agents integrating an existing application.
+
+```bash
+skillbridge inspect-project .
+```
+
+The JSON report identifies top-level technology-stack markers and suggests safe next steps. Inspection does **not** analyze individual functions, modify code, or automatically generate adapters.
+
+For agent-assisted integration, use [`marketplace/skillbridge-auto-integrator/SKILL.md`](marketplace/skillbridge-auto-integrator/SKILL.md) with a compatible coding agent. Ask it to identify suitable read-only capabilities, implement an adapter and manifest, and validate the integration. Review proposed changes and authorize sensitive operations explicitly.
 
 ## Contributing
 
