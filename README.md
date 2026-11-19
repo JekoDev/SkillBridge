@@ -161,3 +161,15 @@ Issues, ideas, and pull requests are welcome. Explore the examples, run the test
 ## License
 
 SkillBridge is released under the [MIT License](LICENSE).
+
+<!-- skillbridge-auto-integrator:start -->
+
+## AI-Assisted Integration (Optional)
+
+Want to integrate SkillBridge into an existing application with your coding agent?
+
+The **[SkillBridge Auto Integrator](https://www.agensi.io/skills/skillbridge)** is an optional paid agent skill that guides project analysis, capability selection, adapter and manifest creation, and integration validation.
+
+**SkillBridge itself is free and open source.** You do not need to purchase the skill to use the framework.
+
+<!-- skillbridge-auto-integrator:end -->
