@@ -1,3 +1,5 @@
+![SkillBridge banner](assets/banner.svg)
+
 # SkillBridge
 
 **Any app. Any language. Any agent.**
